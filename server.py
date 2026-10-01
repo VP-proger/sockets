@@ -85,6 +85,15 @@ def handle_client(sock, addr):
         print(f"[!] {username or addr} - соединение сброшено (RST)")
     except BrokenPipeError:
         print(f"[!] {username or addr} - не удалось отправить, соединение разорвано")
+    except ValueError as e:
+        print(f"[!] {username or addr} - нарушение протокола: {e}")
+        try:
+            proto.send_message(sock, "ERROR", f"protocol error: {e}".encode("utf-8"))
+        except OSError:
+        # клиент уже ушел
+            pass
+    except ConnectionError:
+        print(f"[!] {username or addr} - соединение оборвано посреди сообщения")
     finally:
         with clients_lock:
             clients.pop(sock, None)
