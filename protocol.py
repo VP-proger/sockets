@@ -1,7 +1,7 @@
 import struct
 
 HEADER_FORMAT = "!BI"
-# "!BI" это заголовок в 1 байт, который принимает значение от 0 до 255 и обозначает длину команды
+# B (1 байт) - длина команды от 0 до 255, I (4 байта) - длина payload
 
 HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
 MAX_MESSAGE_SIZE = 10 * 1024 * 1024
