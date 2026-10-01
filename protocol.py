@@ -5,6 +5,8 @@ HEADER_FORMAT = "!BI"
 
 HEADER_SIZE = struct.calcsize(HEADER_FORMAT)
 MAX_MESSAGE_SIZE = 10 * 1024 * 1024
+MAX_COMMAND_SIZE = 64
+# лимит на длину команды в байтах
 
 
 def recv_exact(sock, size):
@@ -23,7 +25,7 @@ def send_message(sock, command, payload=b""):
 
     if len(command_bytes) == 0:
         raise ValueError("команда не может быть пустой")
-    if len(command_bytes) > 255:
+    if len(command_bytes) > MAX_COMMAND_SIZE:
         raise ValueError(f"команда слишком длинная: {len(command_bytes)} байт")
     # Проверяем длину команды
 
@@ -43,7 +45,7 @@ def recv_message(sock):
     command_length, payload_length = struct.unpack(HEADER_FORMAT, header)
     # Из заголовка достаем длину команды и длину payload
 
-    if command_length == 0 or command_length > 255:
+    if command_length == 0 or command_length > MAX_COMMAND_SIZE:
         raise ValueError(f"недопустимая длина команды: {command_length}")
     if payload_length > MAX_MESSAGE_SIZE:
         raise ValueError(f"заявленная длина {payload_length} превышает лимит")
